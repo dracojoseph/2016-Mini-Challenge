@@ -6,6 +6,8 @@ Robot::Robot() :
 	driveStick(Constants::driveStickChannel),
 	frontUltrasonic(Constants::frontUltrasonicPin),
 	backUltrasonic(Constants::backUltrasonicPin),
+	arm(),
+	track(),
 	compressor(Constants::compressorPin) //canbus number
 {
 	robotDrive.SetExpiration(0.1); //safety feature
@@ -13,10 +15,10 @@ Robot::Robot() :
 
 void Robot::OperatorControl() //teleop code
 {
-	robotDrive.SetSafetyEnabled(false);
+	robotDrive.Enable();
 	compressor.Start();
 
-	//track.releaseSmallBalls();
+	track.openBottom();
 
 	while(IsOperatorControl() && IsEnabled())
 	{
@@ -26,15 +28,18 @@ void Robot::OperatorControl() //teleop code
 	}
 
 	compressor.Stop();
+	robotDrive.Disable();
 }
 
 
 
 void Robot::Autonomous() {
 	//use navx mxp
+	robotDrive.Enable();
 	compressor.Start();
 
-	//track.lock();
+	track.closeBottom();
+	track.closeTop();
 
 	int fs = 0;
 	while (frontUltrasonic.getVoltage() * Constants::ultrasonicVoltageToInches > Constants::minDistanceToCheeseballs && fs < 500)
@@ -46,14 +51,18 @@ void Robot::Autonomous() {
 
 	}
 	robotDrive.TankDriveSpeed(0,0);
+	
+	arm.gripOpen();
+	
+	arm.lower();
 
-	//arm.down();
+	arm.gripClose();
 
-	//gripper.grab();
-
-	//arm.up(); (separate thread probably)
-
-	Wait(1);//Temporary so robot doesn't flip
+	arm.raise();
+	
+	arm.lower();
+	
+	arm.gripOpen();
 
 	fs = 0;
 	while (frontUltrasonic.getVoltage() * Constants::ultrasonicVoltageToInches > Constants::minDistanceToCheeseballs && fs < 500)
@@ -66,9 +75,10 @@ void Robot::Autonomous() {
 	}
 	robotDrive.TankDriveSpeed(0,0);
 
-	//track.releaseBigBalls();
+	track.openTop();
 
 	compressor.Stop();
+	robotDrive.Disable();
 }
 
 START_ROBOT_CLASS(Robot);
