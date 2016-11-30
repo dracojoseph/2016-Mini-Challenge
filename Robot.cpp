@@ -13,7 +13,7 @@ Robot::Robot() :
 
 void Robot::OperatorControl() //teleop code
 {
-	robotDrive.SetSafetyEnabled(false);
+	robotDrive.Enable();
 	compressor.Start();
 
 	//track.releaseSmallBalls();
@@ -26,12 +26,14 @@ void Robot::OperatorControl() //teleop code
 	}
 
 	compressor.Stop();
+	robotDrive.Disable();
 }
 
 
 
 void Robot::Autonomous() {
 	//use navx mxp
+	robotDrive.Enable();
 	compressor.Start();
 
 	//track.lock();
@@ -69,6 +71,7 @@ void Robot::Autonomous() {
 	//track.releaseBigBalls();
 
 	compressor.Stop();
+	robotDrive.Disable();
 }
 
 START_ROBOT_CLASS(Robot);
