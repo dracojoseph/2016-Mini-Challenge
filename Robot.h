@@ -9,7 +9,7 @@
 #ifndef SRC_ROBOT_H_
 #define SRC_ROBOT_H_
 
-class Robot : public SampleRobot {
+class Robot : public SampleRobot { 
 	DriveTrain robotDrive;
 	Arm arm;
 	Track track;
