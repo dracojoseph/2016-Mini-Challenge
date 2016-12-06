@@ -15,7 +15,7 @@ Robot::Robot() :
 
 void Robot::OperatorControl() //teleop code
 {
-	robotDrive.Enable();
+	robotDrive.SetSafetyEnabled(false);
 	compressor.Start();
 
 	track.openBottom();
@@ -50,14 +50,14 @@ void Robot::OperatorControl() //teleop code
 	}
 
 	compressor.Stop();
-	robotDrive.Disable();
+	robotDrive.SetSafetyEnabled(true);
 }
 
 
 
 void Robot::Autonomous() {
 	//use navx mxp
-	robotDrive.Enable();
+	robotDrive.SetSafetyEnabled(false);
 	compressor.Start();
 
 	//track.lock();
@@ -97,7 +97,7 @@ void Robot::Autonomous() {
 	track.openTop();
 
 	compressor.Stop();
-	robotDrive.Disable();
+	robotDrive.SetSafetyEnabled(true);
 }
 
 START_ROBOT_CLASS(Robot);
